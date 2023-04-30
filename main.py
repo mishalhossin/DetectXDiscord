@@ -1,4 +1,3 @@
-from keepalive import keep_alive
 import discord
 from discord.ext import commands
 import requests
@@ -65,5 +64,4 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-keep_alive()
 bot.run(TOKEN)
