@@ -21,10 +21,12 @@ To use this bot, you will need the following:
 pip install discord requests hashlib aiohttp os
 ```
 3. Set up `.env` file
+```
 {
   "DISCORD_TOKEN": "your_bots_discord_token",
   "VIRUSTOTAL_API_KEY": "your_virus_total_api_key"
 }
+```
 ## Run the bot
 ```bash
 python main.py
