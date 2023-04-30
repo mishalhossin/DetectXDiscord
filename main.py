@@ -24,7 +24,7 @@ async def download_file(url, file_name):
                         break
                     file.write(chunk)
 
-def check_virus(file_path):
+async def check_virus(file_path):
     with open(file_path, 'rb') as file:
         file_bytes = file.read()
         file_hash = hashlib.sha256(file_bytes).hexdigest()
@@ -36,8 +36,10 @@ def check_virus(file_path):
     if response.status_code == 200:
         json_response = response.json()
         if json_response['response_code'] == 1:
-            return json_response['scan_id']
-    return None
+            positives = json_response['positives']
+            total = json_response['total']
+            return positives > 0, f"{positives}/{total} antivirus software detected a threat in this file."
+    return False, "Error occurred while scanning for viruses."
 
 
 @bot.event
@@ -50,18 +52,16 @@ async def on_message(message):
             file_name = attachment.filename
             file_url = attachment.url
             await download_file(file_url, file_name)
-            scan_id = check_virus(file_name)
-            if scan_id:
+            is_infected, result = await check_virus(file_name)
+            if is_infected:
                 delete_message = True
-                await message.channel.send(f'{message.author.mention} Virus scan detected. Scan ID: {scan_id}')
+                await message.channel.send(f"<@{message.author.id}> Virus scan detected. {result}")
             else:
-                await message.channel.send(f'{message.author.mention} Error occurred while scanning for viruses.')
-
+                await message.channel.send(f"<@{message.author.id}> File is clean. {result}")
             os.remove(file_name)
 
     if delete_message:
         await message.delete()
 
     await bot.process_commands(message)
-
 bot.run(TOKEN)
