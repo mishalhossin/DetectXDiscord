@@ -42,9 +42,9 @@ async def check_virus(file_path):
     return False, "Error occurred while scanning for viruses."
 
 
-@client.event
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == bot.user:
         return
 
     for attachment in message.attachments:
