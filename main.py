@@ -42,10 +42,15 @@ async def check_virus(file_path):
     return False, "Error occurred while scanning for viruses."
 
 
-@bot.event
+@client.event
 async def on_message(message):
-    if message.author == bot.user:
+    if message.author == client.user:
         return
+
+    for attachment in message.attachments:
+        if attachment.content_type.startswith('image/'):
+            return 
+          
     delete_message = False
     if message.attachments:
         for attachment in message.attachments:
@@ -64,4 +69,5 @@ async def on_message(message):
         await message.delete()
 
     await bot.process_commands(message)
+
 bot.run(TOKEN)
