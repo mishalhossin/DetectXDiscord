@@ -35,9 +35,10 @@ def check_virus(file_path):
 
     if response.status_code == 200:
         json_response = response.json()
-        return json_response['scan_id']
-    else:
-        return None
+        scan_id = json_response.get('scan_id')
+        if scan_id:
+            return scan_id
+    return None
 
 @bot.event
 async def on_message(message):
