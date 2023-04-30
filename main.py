@@ -1,3 +1,4 @@
+from keepalive import keep_alive
 import discord
 from discord.ext import commands
 import requests
@@ -35,16 +36,18 @@ def check_virus(file_path):
 
     if response.status_code == 200:
         json_response = response.json()
-        scan_id = json_response.get('scan_id')
-        if scan_id:
-            return scan_id
+        if json_response['response_code'] == 1:
+            return json_response['scan_id']
     return None
+
 
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
-    delete_message = False
+    
+    delete_messages = []
+    
     if message.attachments:
         for attachment in message.attachments:
             file_name = attachment.filename
@@ -52,16 +55,18 @@ async def on_message(message):
             await download_file(file_url, file_name)
             scan_id = check_virus(file_name)
             if scan_id:
-                delete_message = True
+                delete_messages.append(True)
                 await message.channel.send(f'Virus scan detected. Scan ID: {scan_id}')
             else:
-                await message.channel.send('Error occurred while scanning for viruses.')
+                delete_messages.append(False)
+                await message.channel.send('File is safe.')
 
             os.remove(file_name)
 
-    if delete_message:
+    if all(delete_messages):
         await message.delete()
 
     await bot.process_commands(message)
 
+keep_alive()
 bot.run(TOKEN)
