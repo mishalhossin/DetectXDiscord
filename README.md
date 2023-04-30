@@ -2,6 +2,9 @@
 
 This is a Discord bot that can be used to scan files for viruses using the VirusTotal API. The bot listens for messages in a Discord server, and if a message contains a file attachment, it downloads the file, checks it for viruses using the VirusTotal API, and then reports the scan results back to the user and deletes message
 
+### Pre-view
+![image](https://user-images.githubusercontent.com/91066601/235334670-bc642df0-da8e-4d42-b771-b94ca0e3d969.png)
+
 ## Getting Started
 
 ### Prerequisites
