@@ -4,18 +4,16 @@ import requests
 import hashlib
 import aiohttp
 import os
-import re
 
 TOKEN = os.environ['DISCORD_TOKEN']
 VIRUSTOTAL_API_KEY = os.environ['VIRUSTOTAL_API_KEY']
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
-
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
-
+  
 async def download_file(url, file_name):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -43,28 +41,27 @@ async def check_virus(file_path):
             return positives > 0, f"{positives}/{total} antivirus software detected a threat in this file."
     return False, "Error occurred while scanning for viruses."
 
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
-
-    if message.content.startswith('http'):
-        return
-
+    delete_message = False
     if message.attachments:
         for attachment in message.attachments:
-            if attachment.filename.endswith(('.jpg', '.jpeg', '.png', '.gif')):
-                continue
             file_name = attachment.filename
             file_url = attachment.url
             await download_file(file_url, file_name)
             is_infected, result = await check_virus(file_name)
             if is_infected:
+                delete_message = True
                 await message.channel.send(f"<@{message.author.id}> Virus scan detected. {result}")
             else:
                 await message.channel.send(f"<@{message.author.id}> File is clean. {result}")
             os.remove(file_name)
 
-    await bot.process_commands(message)
+    if delete_message:
+        await message.delete()
 
+    await bot.process_commands(message)
 bot.run(TOKEN)
