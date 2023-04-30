@@ -45,9 +45,7 @@ def check_virus(file_path):
 async def on_message(message):
     if message.author == bot.user:
         return
-    
-    delete_messages = []
-    
+    delete_message = False
     if message.attachments:
         for attachment in message.attachments:
             file_name = attachment.filename
@@ -55,15 +53,14 @@ async def on_message(message):
             await download_file(file_url, file_name)
             scan_id = check_virus(file_name)
             if scan_id:
-                delete_messages.append(True)
-                await message.channel.send(f'Virus scan detected. Scan ID: {scan_id}')
+                delete_message = True
+                await message.channel.send(f'{message.author.mention} Virus scan detected. Scan ID: {scan_id}')
             else:
-                delete_messages.append(False)
-                await message.channel.send('File is safe.')
+                await message.channel.send(f'{message.author.mention} Error occurred while scanning for viruses.')
 
             os.remove(file_name)
 
-    if all(delete_messages):
+    if delete_message:
         await message.delete()
 
     await bot.process_commands(message)
