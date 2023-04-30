@@ -8,7 +8,7 @@ This is a Discord bot that can be used to scan files for viruses using the Virus
 
 To use this bot, you will need the following:
 
-- [Python 3.7 or higher]
+- [Python 3.7 or higher](https://www.python.org/)
 - [A Discord bot token](https://discord.com/developers/applications)
 - [A VirusTotal API key](https://support.virustotal.com/hc/en-us/articles/115002088769-Please-give-me-an-API-key)
 
