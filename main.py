@@ -8,12 +8,14 @@ import os
 TOKEN = os.environ['DISCORD_TOKEN']
 VIRUSTOTAL_API_KEY = os.environ['VIRUSTOTAL_API_KEY']
 
+delete_message = False # Configure this
+
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 @bot.event
 async def on_ready():
-    print(f'{bot.user.name} has connected to Discord!')
-  
+    print(f'{bot.user.name} has connected to Discord!')   
+
 async def download_file(url, file_name):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -22,8 +24,8 @@ async def download_file(url, file_name):
                     chunk = await response.content.read(1024)
                     if not chunk:
                         break
-                    file.write(chunk)
-
+                    file.write(chunk)       
+                    
 async def check_virus(file_path):
     with open(file_path, 'rb') as file:
         file_bytes = file.read()
@@ -49,9 +51,8 @@ async def on_message(message):
 
     for attachment in message.attachments:
         if attachment.content_type.startswith('image/'):
-            return 
-          
-    delete_message = False
+            return
+    
     if message.attachments:
         for attachment in message.attachments:
             file_name = attachment.filename
